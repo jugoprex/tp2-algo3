@@ -29,6 +29,11 @@ struct grafo {
 		adyacentes[a.first].push_back(a.second);
 		adyacentes[a.second].push_back(a.first);
 	}
+
+	void agregar_uno(arista a) {
+		agregar(a.first);
+		adyacentes[a.first].push_back(a.second);
+	}
 };
 
 void dfs(grafo &graph, vertice v, vector<int> &padres, vector<int> &tiempos,
@@ -67,7 +72,7 @@ int obenerpuentes(grafo &graph, vertice v, vector<int> &padres,
 	// Si ninǵun descendiente de v era un backedge que alcanzara a cubrir a v,
 	// v forma un puente con su padre
 	if (cantidad == 0 and padres[v] != v)
-		puentes[v] = padres[v];
+	puentes[v] = padres[v];
 
 	return cantidad;
 }
@@ -77,11 +82,7 @@ int main() {
 		int n,m;
 		cin >> n;
 		cin >> m;	
-		// Cortar si no hay más input
-		// if (habitaciones == 0 and pasillos == 0 and consultas == 0)
-		// 	break;
 		
-		// Armar grafo del laberinto en O(?)
 		grafo graph(n);
 		for (int i = 0; i < m; ++i) {
 			int v, w;
@@ -105,20 +106,30 @@ int main() {
 			}
 		}
 
-		// Construir un grafo nuevo a partir de puentes únicamente en O(n)
-		grafo solo_puentes(n);
+		// obtener aristas que no son puentes
+		grafo no_puentes(n);
 		for (int i = 0; i < n; ++i) {
-			if (puentes[i] != -1)
-				solo_puentes.agregar(arista(padres[i], i));
+			if (puentes[i] == -1) {
+				for (vertice w : graph.adyacentes[i]) {
+					if (puentes[w] == -1) {
+						no_puentes.agregar_uno(arista(i, w));
+					}
+				}
+			}
 		}
-		
 		// Descubir en que componente vive cada vertice y marcarlo en O(n + m)
 		padres = vector<vertice>(n, -1); // Limpiar padres
 		for (int i = 0; i < n; ++i) {
 			if (padres[i] == -1)
-				dfs(solo_puentes, i, padres, tiempos, 0, componentes, i);
+				dfs(no_puentes, i, padres, tiempos, 0, componentes, i);
 		}
 		// if componente [i] == componente [j] entonces i y j estan en la misma componente
+
+		// Obtener cantidad de aristas que no son puentes en cada componente conexa
+		vector<int> cantidad(n, 0);
+		for (int i = 0; i < n; ++i) {
+			cantidad[componentes[i]]++;
+		}
 	run = false;
 	}
 	return 0;
