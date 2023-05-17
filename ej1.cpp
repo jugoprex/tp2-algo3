@@ -140,8 +140,8 @@ int main() {
 			}
 		}
 		cout<<setprecision(5)<<fixed;
-		cout << probabilidad << endl;
-	run = false;
+		cout << 1-probabilidad << endl;
+	run = true;
 	}
 	return 0;
 }
