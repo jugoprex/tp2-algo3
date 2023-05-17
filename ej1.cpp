@@ -130,6 +130,16 @@ int main() {
 		for (int i = 0; i < n; ++i) {
 			cantidad[componentes[i]]++;
 		}
+
+		// Probabilidad de elegir 2 nodos de una misma componente conexa
+
+		double probabilidad = 0;
+		for (int i = 0; i < n; ++i) {
+			if (cantidad[i] > 1) {
+				probabilidad += (double) cantidad[i] * (cantidad[i] - 1) / (n * (n - 1));
+			}
+		}
+		cout << probabilidad << endl;
 	run = false;
 	}
 	return 0;
