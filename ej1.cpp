@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
-
+#include <iomanip>
 using namespace std;
 bool run = true;
 typedef int vertice;
@@ -49,13 +49,13 @@ void dfs(grafo &graph, vertice v, vector<int> &padres, vector<int> &tiempos,
 	}
 }
 
-int obenerpuentes(grafo &graph, vertice v, vector<int> &padres,
+int obtenerpuentes(grafo &graph, vertice v, vector<int> &padres,
 				  vector<int> &tiempos, vector<int> &puentes) {
 	int cantidad = 0;
 
 	for (vertice w : graph.adyacentes[v]) {
 		if (padres[w] == v) {
-			cantidad += obenerpuentes(graph, w, padres, tiempos, puentes);
+			cantidad += obtenerpuentes(graph, w, padres, tiempos, puentes);
 		} else {
 			// Si w tenía otro padre y fue descubierto después que v, es backedge
 			// que sube
@@ -102,7 +102,7 @@ int main() {
 			if (padres[i] == -1) {
 				padres[i] = i;
 				dfs(graph, i, padres, tiempos, 0, componentes, i);
-				obenerpuentes(graph, i, padres, tiempos, puentes);
+				obtenerpuentes(graph, i, padres, tiempos, puentes);
 			}
 		}
 
@@ -139,6 +139,7 @@ int main() {
 				probabilidad += (double) cantidad[i] * (cantidad[i] - 1) / (n * (n - 1));
 			}
 		}
+		cout<<setprecision(5)<<fixed;
 		cout << probabilidad << endl;
 	run = false;
 	}
