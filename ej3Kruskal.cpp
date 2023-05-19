@@ -13,6 +13,7 @@ double distancia(oficina a, oficina b){
 }
 
 struct DSU{
+
     DSU(int n){
         padre = rank = vector<int>(n);
         for(int v = 0; v < n; v++) padre[v] = v;

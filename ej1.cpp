@@ -123,11 +123,11 @@ int main() {
 		}
 
 		// genero el grafo original sin puentes
-		grafo no_puentes = graph;
+		grafo no_puentes (n);
 		for (int i = 0; i < n; ++i) {
-			if (puentes[i] != -1) {
+			if (puentes[i] == -1) {
 				// borro la arista puente de no_puentes
-				no_puentes.sacar(no_puentes, arista(i, padres[i]));
+				no_puentes.agregar( arista(i, padres[i]));
 			}
 		}
 
