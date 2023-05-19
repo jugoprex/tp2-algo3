@@ -1,7 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <utility>
-#include <iomanip>
+#include <iomanip> // for setprecision
+#include <algorithm> // for find
+
 using namespace std;
 bool run = true;
 typedef int vertice;
@@ -30,10 +32,24 @@ struct grafo {
 		adyacentes[a.second].push_back(a.first);
 	}
 
-	void agregar_uno(arista a) {
-		agregar(a.first);
-		adyacentes[a.first].push_back(a.second);
-	}
+	void sacar(grafo &graph, arista a) {
+    // Encuentro a la artista en la lista de adyacencia del vertice de origen
+    vector<vertice>& sourceList = graph.adyacentes[a.first];
+    auto it = find(sourceList.begin(), sourceList.end(), a.second);
+    if (it != sourceList.end()) {
+        // Borro la arista del vertice de origen
+        sourceList.erase(it);
+    }
+
+    // Encuentro a la artista en la lista de adyacencia del vertice de destino
+    vector<vertice>& destinationList = graph.adyacentes[a.second];
+    it = find(destinationList.begin(), destinationList.end(), a.first);
+    if (it != destinationList.end()) {
+        // Borro la arista del vertice de destino
+        destinationList.erase(it);
+    }
+	
+}
 };
 
 void dfs(grafo &graph, vertice v, vector<int> &padres, vector<int> &tiempos,
@@ -106,17 +122,17 @@ int main() {
 			}
 		}
 
-		// obtener aristas que no son puentes
-		grafo no_puentes(n);
+		// genero el grafo original sin puentes
+		grafo no_puentes = graph;
 		for (int i = 0; i < n; ++i) {
-			if (puentes[i] == -1) {
-				for (vertice w : graph.adyacentes[i]) {
-					if (puentes[w] == -1) {
-						no_puentes.agregar_uno(arista(i, w));
-					}
-				}
+			if (puentes[i] != -1) {
+				// borro la arista puente de no_puentes
+				no_puentes.sacar(no_puentes, arista(i, padres[i]));
 			}
 		}
+
+		
+    
 		// Descubir en que componente vive cada vertice y marcarlo en O(n + m)
 		padres = vector<vertice>(n, -1); // Limpiar padres
 		for (int i = 0; i < n; ++i) {
@@ -133,15 +149,15 @@ int main() {
 
 		// Probabilidad de elegir 2 nodos de una misma componente conexa
 
-		double probabilidad = 0;
+		long long formasGanar = 0;
 		for (int i = 0; i < n; ++i) {
 			if (cantidad[i] > 1) {
-				probabilidad += (double) cantidad[i] * (cantidad[i] - 1) / (n * (n - 1));
+				formasGanar += (long long) cantidad[i] * (cantidad[i] - 1);
 			}
 		}
-		cout<<setprecision(5)<<fixed;
-		cout << 1-probabilidad << endl;
-	run = true;
+		
+		cout << fixed << setprecision(5) << 1.0- ((formasGanar*1.0)/n/(n-1));
+	run = false;
 	}
 	return 0;
 }
