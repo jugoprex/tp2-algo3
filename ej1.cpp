@@ -130,9 +130,6 @@ int main() {
 				no_puentes.sacar(no_puentes, arista(i, padres[i]));
 			}
 		}
-
-		
-    
 		// Descubir en que componente vive cada vertice y marcarlo en O(n + m)
 		padres = vector<vertice>(n, -1); // Limpiar padres
 		for (int i = 0; i < n; ++i) {
@@ -155,9 +152,9 @@ int main() {
 				formasGanar += (long long) cantidad[i] * (cantidad[i] - 1);
 			}
 		}
-		
-		cout << fixed << setprecision(5) << 1.0- ((formasGanar*1.0)/n/(n-1));
-	run = false;
+		cout<<setprecision(5)<<fixed;
+		cout << 1-probabilidad << endl;
+	run = true;
 	}
 	return 0;
 }
