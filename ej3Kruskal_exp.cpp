@@ -16,7 +16,7 @@ double distancia(oficina a, oficina b){
 struct DSU{
 
     DSU(int n){
-        padre = rank = vector<int>(n);
+        padre = rank = vector<int>(n,0);
         for(int v = 0; v < n; v++) padre[v] = v;
     }
 
@@ -61,7 +61,7 @@ struct DSU_no_rank{
 struct DSU_no_path_compression{
     
         DSU_no_path_compression(int n){
-            padre = vector<int>(n);
+            padre = rank = vector<int>(n,0);
             for(int v = 0; v < n; v++) padre[v] = v;
         }
     
@@ -71,12 +71,19 @@ struct DSU_no_path_compression{
         }
     
         void unite(int u, int v){
-            u = find(u), v = find(v);
-            if(u == v) return;
-            padre[v] = padre[u];
+        u = find(u);
+        v = find(v);
+            if (u != v) {
+                if (rank[u] < rank[v])
+                    swap(u, v);
+                padre[v] = u;
+                if (rank[u] == rank[v])
+                    rank[u]++;
+            }
         }
-    
+
         vector<int> padre;
+        vector<int> rank;
     };
 
 void kruskal(int n,vector<tuple<pair<double,bool>,int,int>> &E, vector<pair<double,bool>> &res){
@@ -208,7 +215,8 @@ int main(){
         }
         time_start = chrono::high_resolution_clock::now();
         vector<pair<double,bool>> res;
-        kruskal(N,E,res);
+        vector<tuple<pair<double,bool>,int,int>> aristas = E;
+        kruskal(N,aristas,res);
         double totalUtp = 0;
         double totalFibra = 0;
         
@@ -223,7 +231,8 @@ int main(){
 
         time_start_no_path_compression = chrono::high_resolution_clock::now();
         vector<pair<double,bool>> res_no_path_compression;
-        kruskal_no_path_compression(N,E,res_no_path_compression);
+        vector<tuple<pair<double,bool>,int,int>> aristas_no_path = E;
+        kruskal_no_path_compression(N,aristas_no_path,res_no_path_compression);
         double totalUtp_no_path_compression = 0;
         double totalFibra_no_path_compression = 0;
 
@@ -239,7 +248,8 @@ int main(){
 
         time_start_no_rank = chrono::high_resolution_clock::now();
         vector<pair<double,bool>> res_no_rank;
-        kruskal_no_rank(N,E,res_no_rank);
+        vector<tuple<pair<double,bool>,int,int>> aristas_no_rank = E;
+        kruskal_no_rank(N,aristas_no_rank,res_no_rank);
         double totalUtp_no_rank = 0;
         double totalFibra_no_rank = 0;
 
@@ -254,7 +264,8 @@ int main(){
 
         time_start_dense = chrono::high_resolution_clock::now();
         vector<pair<double,bool>> res_dense;
-        kruskal_dense(N,E,res_dense);
+        vector<tuple<pair<double,bool>,int,int>> aristas_dense = E;
+        kruskal_dense(N,aristas_dense,res_dense);
         double totalUtp_dense = 0;
         double totalFibra_dense = 0;
 
